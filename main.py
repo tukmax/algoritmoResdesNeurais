@@ -9,7 +9,7 @@ class Entradas():
 
 
 def somatorio(entradas, peso):
-    print(f'Peso do Somatório selecionado = {peso}')
+    # print(f'Peso do Somatório selecionado = {peso}')
     constante = 0
     valor_somatorio = 0
     for e in entradas:
@@ -66,53 +66,50 @@ def calibrar(entradas, peso):
             entrada['pesos'][peso] = round(random.random(), 2) * -1
     return entradas
 
-
-
-def run():
-    # variaveis de entradas e pesos
-    qtd_entradas = 10
-    qtd_pesos = 10
-
-    print('\n=-=-=-=-=-=-=-= Start =-=-=-=-=-=-=-=\n')
-    print(f'Quantidade de entradas: {qtd_entradas}\nQuantidade de pesos por entrada: {qtd_pesos}\n')
-
-    entradas = gera_lista_entradas(qtd_entradas, qtd_pesos)
-    custoFinal = 0
-    print_lista_entradas(entradas)
-
+def gerarListasSomarioIdeaisCustoFinal(entradas):
     listaSomatorio = []
     listaIdeais = []
-    for x in range(qtd_pesos):
+    custoFinal = 0
+    for x in range(len(entradas[0]['pesos'])):
         somat = somatorio(entradas, f"w{x}")
         ideal = round(random.random(), 2)
         listaSomatorio.append(somat)
         listaIdeais.append(ideal)
         custoFinal += custo(somat, ideal)
+    return listaSomatorio, listaIdeais, round(custoFinal, 2)
 
 
+def exec(qtd_entradas, qtd_pesos, qtd_repeticoes_calibragem):
+    print('\n=-=-=-=-=-=-=-= Start =-=-=-=-=-=-=-=\n')
+    print(f'Quantidade de entradas: {qtd_entradas}\nQuantidade de pesos por entrada: {qtd_pesos}\n')
 
-    somatorios = somatorio(entradas, chamada_peso_randomico(qtd_pesos))
+    entradas = gera_lista_entradas(qtd_entradas, qtd_pesos)
+    print(f"Lista de entrada 0")
+    print_lista_entradas(entradas)
+    listaSomatorio, listaIdeais, custoFinal = gerarListasSomarioIdeaisCustoFinal(entradas)
+    print(f'Lista Somaorio/peso: {listaSomatorio},\nLista Valores Ideais/peso: {listaIdeais},\nCusto Total: {custoFinal}')
 
-    print(f"Lista de somatorios {listaSomatorio}")
-    print(f"Lista de ideais {listaIdeais}")
-    print(f"Custo final {custoFinal}")
-
-
-    novasEntradas = calibrar(entradas, chamada_peso_randomico(qtd_pesos))
-    for x in range(6):
-        print("##################    Novas entradas     ######################")
+    num_entrada = 0
+    for x in range(qtd_repeticoes_calibragem):
+        num_entrada += 1
+        print(f"\nLista de entrada {num_entrada}")
+        novasEntradas = calibrar(entradas, chamada_peso_randomico(len(entradas[0]['pesos'])))
         print_lista_entradas(novasEntradas)
-        somatorios = somatorio(novasEntradas, chamada_peso_randomico(qtd_pesos))
-        custos = custo(somatorios, 1)
-        print(f'Valor da Função de Ativação: {somatorios}')
-        print(f'Valor da Função de Custo: {custos}')
-        novasEntradas = calibrar(entradas, chamada_peso_randomico(qtd_pesos))
-        print("###############      Fim novas entradas      ########################")
+        listaSomatorio, listaIdeais, custoFinal = gerarListasSomarioIdeaisCustoFinal(entradas)
+        print(f'Lista Somaorio/peso: {listaSomatorio},\nLista Valores Ideais/peso: {listaIdeais},\nCusto Total: {custoFinal}')
+
+
+    print("Fim da execução")
+
+def run():
+    # variaveis de entradas e pesos
+    qtd_entradas = 10
+    qtd_pesos = 10
+    qtd_repeticoes_calibragem = 10
+    exec(qtd_entradas, qtd_pesos, qtd_repeticoes_calibragem)
 
 
 
-    print(f"entradas {(entradas[1])}")
-    print(f"entradas {(entradas[2])}")
 
 if __name__ == '__main__':
     run()
